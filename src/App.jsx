@@ -1,61 +1,38 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "./slide.css";
-// css 와 모듈 확인
-import { Navigation } from "swiper/modules";
-import "swiper/css/navigation";
-import { useEffect, useState } from "react";
-
-// 1. 외부 데이터
-const slideData = [
-  {
-    title: "뉴진스 좋아요",
-    pic: "https://i.namu.wiki/i/WGsJjdq_YZ55OqLwDcVy03tPUDeuy2bFGjbv7hGdqeTxhugt9oQVd9skQTplZArzk64Id35mmLbkbcMwWEo2-g.webp",
-  },
-  {
-    title: "뉴진스 화이팅",
-    pic: "https://file2.nocutnews.co.kr/newsroom/image/2023/01/21/202301210408091762_0.jpg",
-  },
-  {
-    title: "뉴진스 힘내요",
-    pic: "https://img.sbs.co.kr/newsnet/etv/upload/2023/08/28/30000871570_1280.jpg",
-  },
-];
+import { useEffect } from "react";
 
 function App() {
-  //1. 외부 데이터 useState 지정하기
-  const [data, setData] = useState([]);
+  // 앱 실행 후 컴포넌트가  마운트 될때 js 를 실행한다.
+  // html 완료가 되면 출력
   useEffect(() => {
-    setData([...slideData]);
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_MAP_KEY}&autoload=false&libraries=services`;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        const container = document.getElementById("map");
+        const options = {
+          center: new window.kakao.maps.LatLng(37.5665, 126.978),
+          level: 3,
+        };
+        const map = new window.kakao.maps.Map(container, options);
+
+        const marker = new window.kakao.maps.Marker({
+          position: map.getCenter(),
+        });
+        marker.setMap(map);
+      });
+    };
   }, []);
 
   return (
     <div>
-      <h1>Swiper</h1>
-      <div className="visual-slide">
-        <Swiper
-          loop={true}
-          navigation={true}
-          modules={[Navigation]}
-          className="sw-visual"
-        >
-          {/* <SwiperSlide>하나</SwiperSlide>
-          <SwiperSlide>둘</SwiperSlide>
-          <SwiperSlide>삼</SwiperSlide>
-          <SwiperSlide>넷</SwiperSlide>
-          <SwiperSlide>다섯</SwiperSlide> */}
-          {/* 1. 외부데이터 map 으로 적용 시키기 */}
-          {data.map((item, index) => {
-            return (
-              <SwiperSlide key={index}>
-                <img src={item.pic} alt={item.title} />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+      <h1>카카오 지도</h1>
+      <div>
+        <div id="map" style={{ width: 500, height: 500 }}></div>
       </div>
     </div>
   );
 }
-
 export default App;
