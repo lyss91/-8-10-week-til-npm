@@ -1,347 +1,107 @@
-import { ResponsiveLine } from "@nivo/line";
+import { useContext } from "react";
+import { UserInfoContext, UserInfoProvider } from "./contexts/UserInfoContext";
 
-const getData = [
-  {
-    id: "japan",
-    color: "hsl(144, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 217,
-      },
-      {
-        x: "helicopter",
-        y: 42,
-      },
-      {
-        x: "boat",
-        y: 260,
-      },
-      {
-        x: "train",
-        y: 152,
-      },
-      {
-        x: "subway",
-        y: 36,
-      },
-      {
-        x: "bus",
-        y: 199,
-      },
-      {
-        x: "car",
-        y: 60,
-      },
-      {
-        x: "moto",
-        y: 262,
-      },
-      {
-        x: "bicycle",
-        y: 51,
-      },
-      {
-        x: "horse",
-        y: 196,
-      },
-      {
-        x: "skateboard",
-        y: 16,
-      },
-      {
-        x: "others",
-        y: 3,
-      },
-    ],
-  },
-  {
-    id: "france",
-    color: "hsl(79, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 27,
-      },
-      {
-        x: "helicopter",
-        y: 79,
-      },
-      {
-        x: "boat",
-        y: 47,
-      },
-      {
-        x: "train",
-        y: 134,
-      },
-      {
-        x: "subway",
-        y: 251,
-      },
-      {
-        x: "bus",
-        y: 47,
-      },
-      {
-        x: "car",
-        y: 213,
-      },
-      {
-        x: "moto",
-        y: 47,
-      },
-      {
-        x: "bicycle",
-        y: 1,
-      },
-      {
-        x: "horse",
-        y: 260,
-      },
-      {
-        x: "skateboard",
-        y: 266,
-      },
-      {
-        x: "others",
-        y: 73,
-      },
-    ],
-  },
-  {
-    id: "us",
-    color: "hsl(15, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 241,
-      },
-      {
-        x: "helicopter",
-        y: 147,
-      },
-      {
-        x: "boat",
-        y: 119,
-      },
-      {
-        x: "train",
-        y: 31,
-      },
-      {
-        x: "subway",
-        y: 176,
-      },
-      {
-        x: "bus",
-        y: 155,
-      },
-      {
-        x: "car",
-        y: 68,
-      },
-      {
-        x: "moto",
-        y: 278,
-      },
-      {
-        x: "bicycle",
-        y: 290,
-      },
-      {
-        x: "horse",
-        y: 38,
-      },
-      {
-        x: "skateboard",
-        y: 293,
-      },
-      {
-        x: "others",
-        y: 184,
-      },
-    ],
-  },
-  {
-    id: "germany",
-    color: "hsl(84, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 64,
-      },
-      {
-        x: "helicopter",
-        y: 157,
-      },
-      {
-        x: "boat",
-        y: 259,
-      },
-      {
-        x: "train",
-        y: 158,
-      },
-      {
-        x: "subway",
-        y: 163,
-      },
-      {
-        x: "bus",
-        y: 12,
-      },
-      {
-        x: "car",
-        y: 203,
-      },
-      {
-        x: "moto",
-        y: 169,
-      },
-      {
-        x: "bicycle",
-        y: 95,
-      },
-      {
-        x: "horse",
-        y: 80,
-      },
-      {
-        x: "skateboard",
-        y: 119,
-      },
-      {
-        x: "others",
-        y: 220,
-      },
-    ],
-  },
-  {
-    id: "norway",
-    color: "hsl(61, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 199,
-      },
-      {
-        x: "helicopter",
-        y: 204,
-      },
-      {
-        x: "boat",
-        y: 112,
-      },
-      {
-        x: "train",
-        y: 1,
-      },
-      {
-        x: "subway",
-        y: 154,
-      },
-      {
-        x: "bus",
-        y: 281,
-      },
-      {
-        x: "car",
-        y: 76,
-      },
-      {
-        x: "moto",
-        y: 214,
-      },
-      {
-        x: "bicycle",
-        y: 196,
-      },
-      {
-        x: "horse",
-        y: 251,
-      },
-      {
-        x: "skateboard",
-        y: 220,
-      },
-      {
-        x: "others",
-        y: 275,
-      },
-    ],
-  },
-];
+const Header = () => {
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  return (
+    <header>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <p>로고</p>
+        <nav>
+          {userInfo.userId === "" ? (
+            <div>
+              <button
+                onClick={() => {
+                  setUserInfo({
+                    userId: "hong",
+                    userName: "길동",
+                    userRole: "MEMBER",
+                  });
+                }}
+              >
+                로그인
+              </button>
+              <button onClick={() => {}}>회원가입</button>
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => {
+                  setUserInfo({ userId: "", userName: "", userRole: "GUEST" });
+                }}
+              >
+                로그아웃
+              </button>
+              <button onClick={() => {}}>{userInfo.userName}님 정보수정</button>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+};
+const Footer = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <footer>하단 {userInfo.userRole}</footer>;
+};
+const Main = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return (
+    <main>
+      {userInfo.userId === "" ? (
+        <div>로그인을 하셔야 서비스를 이용합니다.</div>
+      ) : (
+        <div>
+          <Chracter />
+          <Friend />
+          <Point />
+          <Map />
+          <FAQ />
+        </div>
+      )}
+    </main>
+  );
+};
+
+const Chracter = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return (
+    <div>
+      <div>{userInfo.userName}님 캐릭터 변경 서비스</div>
+      <ChoiceCharacter>캐릭터 종류 선택 서비스</ChoiceCharacter>
+    </div>
+  );
+};
+const ChoiceCharacter = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 캐릭터 종류 선택 서비스</div>;
+};
+
+const Friend = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 친구관리 서비스</div>;
+};
+const Point = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 포인트 구매 서비스</div>;
+};
+const Map = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 주변 서비스 지도안내 서비스</div>;
+};
+const FAQ = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 고객센터 QA 서비스</div>;
+};
+
 function App() {
   return (
-    <div style={{ width: "80%", height: 500, margin: "0 auto" }}>
-      <ResponsiveLine
-        data={getData}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-        xScale={{ type: "point" }}
-        yScale={{
-          type: "linear",
-          min: "auto",
-          max: "auto",
-          stacked: true,
-          reverse: false,
-        }}
-        yFormat=" >-.2f"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "transportation",
-          legendOffset: 36,
-          legendPosition: "middle",
-          truncateTickAt: 0,
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "count",
-          legendOffset: -40,
-          legendPosition: "middle",
-          truncateTickAt: 0,
-        }}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
-        pointLabel="data.yFormatted"
-        pointLabelYOffset={-12}
-        enableTouchCrosshair={true}
-        useMesh={true}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            justify: false,
-            translateX: 100,
-            translateY: 0,
-            itemsSpacing: 0,
-            itemDirection: "left-to-right",
-            itemWidth: 80,
-            itemHeight: 20,
-            itemOpacity: 0.75,
-            symbolSize: 12,
-            symbolShape: "circle",
-            symbolBorderColor: "rgba(0, 0, 0, .5)",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemBackground: "rgba(0, 0, 0, .03)",
-                  itemOpacity: 1,
-                },
-              },
-            ],
-          },
-        ]}
-      />
+    <div>
+      <UserInfoProvider>
+        <Header />
+        <Main />
+        <Footer />
+      </UserInfoProvider>
     </div>
   );
 }

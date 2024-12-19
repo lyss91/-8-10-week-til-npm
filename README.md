@@ -1,388 +1,281 @@
-# Nivo chart
+# Context API
 
-- [Nivo npm] https://nivo.rocks/
-- [Nivo git] https://github.com/plouc/nivo#readme
+- 용도 :
+  : 웹 앱서비스의 기본적으로 관리할 자료보관 및 처리
+  : 로그인 한 사용자 정보
+  : 테마
+  : 장바구니 등
 
-## 설치
+- 특징
+  : 개별 컴포넌트의 state가 아니고, 앱 전체의 state 이다.
+  : Context 로드 충분하지만, 좀 더 복잡한 데이터 처리 라이브러리 많음.
+  : 1. Redux(난이도 가장 높음),
+  : 2. Recoil(난이도 낮고, 국내 활성화),
+  : 3. Zustand(난이도 낮고, 해외 활성화, 국내 활성화 중) 등
 
-- 기본설치 : `npm i @nivo/core`
-- 설치 후 package.json 에서 확인
+## useState 로 state 관리를 해보자.
 
-```
- "dependencies": {
-    "@nivo/core": "^0.88.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-kakao-maps-sdk": "^1.1.27",
-    "swiper": "^11.1.15"
+- useState 는 각각의 컴포넌트가 state 를 관리하는 형식
+- Drilling 으로 인한 문제점을 이해해 보자.
 
-
-```
-
-## 각 차트 모양을 보고 설치를 별도 진행
-
-- 1. Line 차트라면 `npm i @nivo/line`
-- https://nivo.rocks/line/
-- 2. Bar 차트라면 `npm i @nivo/bar`
-- https://nivo.rocks/bar/
-
-## 실습
-
-- App.jsx
+- App.jsx ( useState 로 로그인한 사용자 정보 관리 )
 
 ```jsx
-import { ResponsiveLine } from "@nivo/line";
+import { useState } from "react";
 
-// @start 활용 데이터
-const getData = [
-  {
-    id: "japan",
-    color: "hsl(144, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 217,
-      },
-      {
-        x: "helicopter",
-        y: 42,
-      },
-      {
-        x: "boat",
-        y: 260,
-      },
-      {
-        x: "train",
-        y: 152,
-      },
-      {
-        x: "subway",
-        y: 36,
-      },
-      {
-        x: "bus",
-        y: 199,
-      },
-      {
-        x: "car",
-        y: 60,
-      },
-      {
-        x: "moto",
-        y: 262,
-      },
-      {
-        x: "bicycle",
-        y: 51,
-      },
-      {
-        x: "horse",
-        y: 196,
-      },
-      {
-        x: "skateboard",
-        y: 16,
-      },
-      {
-        x: "others",
-        y: 3,
-      },
-    ],
-  },
-  {
-    id: "france",
-    color: "hsl(79, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 27,
-      },
-      {
-        x: "helicopter",
-        y: 79,
-      },
-      {
-        x: "boat",
-        y: 47,
-      },
-      {
-        x: "train",
-        y: 134,
-      },
-      {
-        x: "subway",
-        y: 251,
-      },
-      {
-        x: "bus",
-        y: 47,
-      },
-      {
-        x: "car",
-        y: 213,
-      },
-      {
-        x: "moto",
-        y: 47,
-      },
-      {
-        x: "bicycle",
-        y: 1,
-      },
-      {
-        x: "horse",
-        y: 260,
-      },
-      {
-        x: "skateboard",
-        y: 266,
-      },
-      {
-        x: "others",
-        y: 73,
-      },
-    ],
-  },
-  {
-    id: "us",
-    color: "hsl(15, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 241,
-      },
-      {
-        x: "helicopter",
-        y: 147,
-      },
-      {
-        x: "boat",
-        y: 119,
-      },
-      {
-        x: "train",
-        y: 31,
-      },
-      {
-        x: "subway",
-        y: 176,
-      },
-      {
-        x: "bus",
-        y: 155,
-      },
-      {
-        x: "car",
-        y: 68,
-      },
-      {
-        x: "moto",
-        y: 278,
-      },
-      {
-        x: "bicycle",
-        y: 290,
-      },
-      {
-        x: "horse",
-        y: 38,
-      },
-      {
-        x: "skateboard",
-        y: 293,
-      },
-      {
-        x: "others",
-        y: 184,
-      },
-    ],
-  },
-  {
-    id: "germany",
-    color: "hsl(84, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 64,
-      },
-      {
-        x: "helicopter",
-        y: 157,
-      },
-      {
-        x: "boat",
-        y: 259,
-      },
-      {
-        x: "train",
-        y: 158,
-      },
-      {
-        x: "subway",
-        y: 163,
-      },
-      {
-        x: "bus",
-        y: 12,
-      },
-      {
-        x: "car",
-        y: 203,
-      },
-      {
-        x: "moto",
-        y: 169,
-      },
-      {
-        x: "bicycle",
-        y: 95,
-      },
-      {
-        x: "horse",
-        y: 80,
-      },
-      {
-        x: "skateboard",
-        y: 119,
-      },
-      {
-        x: "others",
-        y: 220,
-      },
-    ],
-  },
-  {
-    id: "norway",
-    color: "hsl(61, 70%, 50%)",
-    data: [
-      {
-        x: "plane",
-        y: 199,
-      },
-      {
-        x: "helicopter",
-        y: 204,
-      },
-      {
-        x: "boat",
-        y: 112,
-      },
-      {
-        x: "train",
-        y: 1,
-      },
-      {
-        x: "subway",
-        y: 154,
-      },
-      {
-        x: "bus",
-        y: 281,
-      },
-      {
-        x: "car",
-        y: 76,
-      },
-      {
-        x: "moto",
-        y: 214,
-      },
-      {
-        x: "bicycle",
-        y: 196,
-      },
-      {
-        x: "horse",
-        y: 251,
-      },
-      {
-        x: "skateboard",
-        y: 220,
-      },
-      {
-        x: "others",
-        y: 275,
-      },
-    ],
-  },
-];
-
-// @End 활용 데이터
-//  @ start 활용 코드
-function App() {
+const Header = ({ userInfo, setUserInfo }) => {
   return (
-    <div style={{ width: "80%", height: 500, margin: "0 auto" }}>
-      <ResponsiveLine
-        data={getData}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-        xScale={{ type: "point" }}
-        yScale={{
-          type: "linear",
-          min: "auto",
-          max: "auto",
-          stacked: true,
-          reverse: false,
-        }}
-        yFormat=" >-.2f"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "transportation",
-          legendOffset: 36,
-          legendPosition: "middle",
-          truncateTickAt: 0,
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: "count",
-          legendOffset: -40,
-          legendPosition: "middle",
-          truncateTickAt: 0,
-        }}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
-        pointLabel="data.yFormatted"
-        pointLabelYOffset={-12}
-        enableTouchCrosshair={true}
-        useMesh={true}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            justify: false,
-            translateX: 100,
-            translateY: 0,
-            itemsSpacing: 0,
-            itemDirection: "left-to-right",
-            itemWidth: 80,
-            itemHeight: 20,
-            itemOpacity: 0.75,
-            symbolSize: 12,
-            symbolShape: "circle",
-            symbolBorderColor: "rgba(0, 0, 0, .5)",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemBackground: "rgba(0, 0, 0, .03)",
-                  itemOpacity: 1,
-                },
-              },
-            ],
-          },
-        ]}
-      />
+    <header>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <p>로고</p>
+        <nav>
+          {" "}
+          {userInfo.userId === "" ? (
+            <div>
+              <button
+                onClick={() => {
+                  setUserInfo({
+                    userId: "hong",
+                    userName: "길동",
+                    userRole: "MEMBER",
+                  });
+                }}
+              >
+                로그인
+              </button>
+              <button onClick={() => {}}>회원가입</button>
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => {
+                  serUserInfo({ userId: "", userName: {}, userRole: "GUEST" });
+                }}
+              >
+                로그아웃
+              </button>
+              <button onClick={() => {}}>{userInfo.userName}님 정보수정</button>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+const Main = ({ userInfo }) => {
+  return (
+    <main>
+      {userInfo.userId === "" ? (
+        <div>로그인을 하셔야 서비스를 이용합니다.</div>
+      ) : (
+        <div>
+          <Character userInfo={userInfo} />
+          <Friend userInfo={userInfo} />
+          <Point userInfo={userInfo} />
+          <Map userInfo={userInfo} />
+          <FAQ userInfo={userInfo} />
+        </div>
+      )}
+    </main>
+  );
+};
+
+const Character = ({ userInfo }) => {
+  return (
+    <div>
+      <div>{{ userInfo }.userName}님 캐릭터 변경 서비스</div>;
+      <ChoiceCaracter userInfo={userInfo}>
+        캐릭터 종류 선택 서비스
+      </ChoiceCaracter>
+    </div>
+  );
+};
+const ChoiceCaracter = ({ userInfo }) => {
+  return <div>{userInfo.userName}님 캐릭터 종류 선택 서비스</div>;
+};
+const Friend = ({ userInfo }) => {
+  return <div>{{ userInfo }.userName}님친구관리 서비스</div>;
+};
+const Point = ({ userInfo }) => {
+  return <div>{{ userInfo }.userName}님포인트 구매 서비스</div>;
+};
+const Map = ({ userInfo }) => {
+  return <div>{{ userInfo }.userName}님주변 서비스 상점 서비스</div>;
+};
+const FAQ = ({ userInfo }) => {
+  return <div>{{ userInfo }.userName}님고객센터 QA 서비스</div>;
+};
+
+const Footer = ({ userInfo }) => {
+  return <footer>하단 {userInfo.userRole} </footer>;
+};
+function App() {
+  // useState 로 로그인한 사용자 정보 관리
+  const [userInfo, setUserInfo] = useState({
+    userId: "",
+    userName: "",
+    userRole: "GUEST",
+  });
+  return (
+    <div>
+      <Header userInfo={userInfo} setUserInfo={setUserInfo} />
+      <Main userInfo={userInfo} />
+      <Footer userInfo={userInfo} />
     </div>
   );
 }
-//  @ End 활용 코드
 
+export default App;
+```
+
+- 이렇게 긴 코드 문제를 해결 하기 위해서 Context API 활용
+
+## Context API 활용
+
+## 추천 폴더 구조
+
+- `/src/contexts` 폴더 생성을 권장
+  : constext 는 `문맥` 이라고 합니다.
+  : constext 는 `일관성` 이라고 합니다.
+  : constext 는 `목표` 이라고 합니다.
+  : constext 는 `프로그램의 전체 목표를 이루기 위한 흐름` 이라고 합니다.
+
+### 추천 파일
+
+- `/src/contexts/ ` 파일 생성
+  : 예) ThemeContext.jsx, BucketContex.js, UserInfoContext.jsx
+- `UserInfoContexts.jsx` 생성
+
+```jsx
+import { createContext, useState } from "react";
+
+export const UserInfoContext = createContext();
+export const UserInfoProvider = ({ children }) => {
+  const [userInfo, setUserInfo] = useState({
+    userId: "",
+    userName: "",
+    userRole: "GUEST",
+  });
+  // return {값, 기능 목록등...}
+  return (
+    <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
+      {/* 지역범위 */}
+      {children}
+    </UserInfoContext.Provider>
+  );
+};
+```
+
+- App.jsx 반영
+
+```jsx
+import { useContext } from "react";
+import { UserInfoContext, UserInfoProvider } from "./contexts/UserInfoContext";
+
+const Header = () => {
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  return (
+    <header>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <p>로고</p>
+        <nav>
+          {userInfo.userId === "" ? (
+            <div>
+              <button
+                onClick={() => {
+                  setUserInfo({
+                    userId: "hong",
+                    userName: "길동",
+                    userRole: "MEMBER",
+                  });
+                }}
+              >
+                로그인
+              </button>
+              <button onClick={() => {}}>회원가입</button>
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => {
+                  setUserInfo({ userId: "", userName: "", userRole: "GUEST" });
+                }}
+              >
+                로그아웃
+              </button>
+              <button onClick={() => {}}>{userInfo.userName}님 정보수정</button>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+};
+const Footer = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <footer>하단 {userInfo.userRole}</footer>;
+};
+const Main = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return (
+    <main>
+      {userInfo.userId === "" ? (
+        <div>로그인을 하셔야 서비스를 이용합니다.</div>
+      ) : (
+        <div>
+          <Chracter />
+          <Friend />
+          <Point />
+          <Map />
+          <FAQ />
+        </div>
+      )}
+    </main>
+  );
+};
+
+const Chracter = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return (
+    <div>
+      <div>{userInfo.userName}님 캐릭터 변경 서비스</div>
+      <ChoiceCharacter>캐릭터 종류 선택 서비스</ChoiceCharacter>
+    </div>
+  );
+};
+const ChoiceCharacter = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 캐릭터 종류 선택 서비스</div>;
+};
+
+const Friend = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 친구관리 서비스</div>;
+};
+const Point = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 포인트 구매 서비스</div>;
+};
+const Map = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 주변 서비스 지도안내 서비스</div>;
+};
+const FAQ = () => {
+  const { userInfo } = useContext(UserInfoContext);
+  return <div>{userInfo.userName}님 고객센터 QA 서비스</div>;
+};
+
+function App() {
+  return (
+    <div>
+      <UserInfoProvider>
+        <Header />
+        <Main />
+        <Footer />
+      </UserInfoProvider>
+    </div>
+  );
+}
 export default App;
 ```
