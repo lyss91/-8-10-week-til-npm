@@ -1,107 +1,56 @@
-import { useContext } from "react";
-import { UserInfoContext, UserInfoProvider } from "./contexts/UserInfoContext";
-
-const Header = () => {
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
-  return (
-    <header>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <p>로고</p>
-        <nav>
-          {userInfo.userId === "" ? (
-            <div>
-              <button
-                onClick={() => {
-                  setUserInfo({
-                    userId: "hong",
-                    userName: "길동",
-                    userRole: "MEMBER",
-                  });
-                }}
-              >
-                로그인
-              </button>
-              <button onClick={() => {}}>회원가입</button>
-            </div>
-          ) : (
-            <div>
-              <button
-                onClick={() => {
-                  setUserInfo({ userId: "", userName: "", userRole: "GUEST" });
-                }}
-              >
-                로그아웃
-              </button>
-              <button onClick={() => {}}>{userInfo.userName}님 정보수정</button>
-            </div>
-          )}
-        </nav>
-      </div>
-    </header>
-  );
-};
-const Footer = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <footer>하단 {userInfo.userRole}</footer>;
-};
-const Main = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return (
-    <main>
-      {userInfo.userId === "" ? (
-        <div>로그인을 하셔야 서비스를 이용합니다.</div>
-      ) : (
-        <div>
-          <Chracter />
-          <Friend />
-          <Point />
-          <Map />
-          <FAQ />
-        </div>
-      )}
-    </main>
-  );
-};
-
-const Chracter = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return (
-    <div>
-      <div>{userInfo.userName}님 캐릭터 변경 서비스</div>
-      <ChoiceCharacter>캐릭터 종류 선택 서비스</ChoiceCharacter>
-    </div>
-  );
-};
-const ChoiceCharacter = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <div>{userInfo.userName}님 캐릭터 종류 선택 서비스</div>;
-};
-
-const Friend = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <div>{userInfo.userName}님 친구관리 서비스</div>;
-};
-const Point = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <div>{userInfo.userName}님 포인트 구매 서비스</div>;
-};
-const Map = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <div>{userInfo.userName}님 주변 서비스 지도안내 서비스</div>;
-};
-const FAQ = () => {
-  const { userInfo } = useContext(UserInfoContext);
-  return <div>{userInfo.userName}님 고객센터 QA 서비스</div>;
-};
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+// 서버에서 Response 된 데이터
+const getData = [
+  {
+    id: 1,
+    title: "swaggr 완료",
+    createAt: "2024-12-13T10:00:00Z",
+  },
+  {
+    id: 2,
+    title: "react 완료",
+    createAt: "2024-12-18T10:00:00Z",
+  },
+];
 
 function App() {
+  // 오늘의 날짜
+  const todayDayjs = dayjs().format("YYYY-MM-DD");
   return (
     <div>
-      <UserInfoProvider>
-        <Header />
-        <Main />
-        <Footer />
-      </UserInfoProvider>
+      <h1>dayjs 활용 날짜관련</h1>
+      <div>
+        <p>오늘은 {todayDayjs}</p>
+        {getData.map(item => {
+          return (
+            <p key={item.id}>
+              아이디 : {item.id} 제목 : {item.title} 날짜 :{" "}
+              {dayjs(item.createAt).format("YYYY-MM-DD")}
+            </p>
+          );
+        })}
+
+        <h2>dayjs 를 활용한 5일 뒤 날짜 계산하기 </h2>
+        {getData.map(item => {
+          return (
+            <p key={item.id}>
+              아이디 : {item.id} 제목 : {item.title} 5일 뒤의 날짜 :{" "}
+              {dayjs(item.createAt).add(5, "days").format("YYYY-MM-DD")}
+            </p>
+          );
+        })}
+        <h3>dayjs 를 활용한 시간이 얼마나 지났는지? </h3>
+        {getData.map(item => {
+          return (
+            <p key={item.id}>
+              아이디 : {item.id} 제목 : {item.title} 얼마나 지났는지 :{" "}
+              {dayjs(item.createAt).fromNow()}
+            </p>
+          );
+        })}
+      </div>
     </div>
   );
 }
