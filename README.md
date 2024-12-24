@@ -1,290 +1,156 @@
-# react-quill [9주차-월요일]
+# useRef
 
-- 참고(WYSIWYG Editor)
-  : react-quill, CKEditor, Toast Editor, Tiptab
+- `리랜더링 하여도 값을 보관`한다.
+- 화면 출력 용도는 아님
+- 용도
+  : html 태그 참조
+  : 변수값 참조
 
-## 설치
+## DOM 요소 접근
 
-- [사이트] https://quilljs.com/docs/quickstart
-- `npm i react-quill`
-- `npm i quill`
-
-## 실습
-
-- App.jsx (기본 형태)
+- App.jsx
 
 ```jsx
-import { useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useRef } from "react";
 
 function App() {
-  const [data, setData] = useState("");
+  // 태그참조
+  const inputRef = useRef(null);
+
+  const handleFocus = () => {
+    // current 를 통해서 태그 참조
+    inputRef.current.focus();
+  };
   return (
     <div>
-      <h1>Editor</h1>
-      <div style={{ width: "80%", margin: "0 auto" }}>
-        <form>
-          {/* <textarea></textarea> */}
-          <ReactQuill onChange={e => setData(e)} />
-        </form>
-      </div>
-      <div>
-        <h2>입력중인 데이터</h2>
-        <p>{data}</p>
-      </div>
+      <h1>포커스이동</h1>
+      {/* ref 로 연결한다. */}
+      <input ref={inputRef} placeholder="아이디 입력" />
+      <button onClick={() => handleFocus()}>입력창 이동</button>
     </div>
   );
 }
 export default App;
 ```
 
-## `크로스 사이트 스크립트 공격` 가능성이 있다.
+### 값 접근 및 저장
 
-- XSS 위험이 존재함.
-- 이를 방지하기 위한 라이브러리 설치가 필요
-  : https://www.npmjs.com/package/dompurify
-
-  : npm i dompurify
+- 리랜더링 시에도 값을 보관한다.
 
 ```jsx
-// js 관련 글자들을 특수한 글자로 변경한다.
-import DOMPurify from "dompurify";
-
-<div>
-  <h2>입력중인 데이터</h2>
-  <p>{data}</p>
-  {/* 크로스 사이트 스크립트 공격` 가능성이 방지 위한 npm i dompurify 설치 이후에 */}
-  {/* <p dangerouslySetInnerHTML={{ __html: data }} /> */}
-  {/* 최소한의 방어책  */}
-  <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />
-</div>;
-```
-
-### moduels 툴바 옵션적용
-
-```jsx
-// 모듈 활용
-const modules = {
-  toolbar: {
-    container: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ font: [] }],
-      [{ align: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }, "link"],
-      [
-        {
-          color: [
-            "#000000",
-            "#e60000",
-            "#ff9900",
-            "#ffff00",
-            "#008a00",
-            "#0066cc",
-            "#9933ff",
-            "#ffffff",
-            "#facccc",
-            "#ffebcc",
-            "#ffffcc",
-            "#cce8cc",
-            "#cce0f5",
-            "#ebd6ff",
-            "#bbbbbb",
-            "#f06666",
-            "#ffc266",
-            "#ffff66",
-            "#66b966",
-            "#66a3e0",
-            "#c285ff",
-            "#888888",
-            "#a10000",
-            "#b26b00",
-            "#b2b200",
-            "#006100",
-            "#0047b2",
-            "#6b24b2",
-            "#444444",
-            "#5c0000",
-            "#663d00",
-            "#666600",
-            "#003700",
-            "#002966",
-            "#3d1466",
-            "custom-color",
-          ],
-        },
-        { background: [] },
-      ],
-      ["image", "video"],
-      ["clean"],
-    ],
-  },
-};
-```
-
-## 이미지 처리
-
-- 이미지는 프론트엔드에서 직접 파일을 백엔드로 전송한다.
-- App.jsx
-
-```jsx
-import { useMemo, useRef, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-
-// js 관련 글자들을 특수한 글자로 변경한다.
-import DOMPurify from "dompurify";
+import { useRef } from "react";
 
 function App() {
-  const [data, setData] = useState("");
-
-  //순서1 12.24 (화) useRef 는 React 에서 html 태그 참조할 때
-  const quillRef = useRef(null);
-
-  // 순서3 12.24 (화) 이미지 처리(프론트에서 처리)
-  const imageHandler = () => {
-    // console.log("이미지 처리하기");
-    // 1. 현재 찾아서 에디터를 참조한다.
-    // useRef 로 보관한 내용물 참조 (current)
-    const editor = quillRef.current.getEditor();
-    console.log(editor);
-    // 2. js로 <input type="file" /> 을 생성한다.
-    const input = document.createElement("input");
-    // 3. js로 속성을 셋팅한다.
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    console.log(input);
-    // 4. js로 마치 <input type="file" />을 클릭한 것처럼 실행한다.
-    input.click(); // 각에 클릭
-    // 5. js로 "change" 이벤트를 생성해 준다.
-    input.addEventListener("change", function () {
-      // 안전한 코딩
-      try {
-        // 선택된 파일
-        const file = input.files[0];
-        // 임시 웹브라우저의 cache 이미지 URL 생성
-
-        // 백엔드로 post 샘플 코드
-        // const formData = new FormData();
-        // formData.append("이름", file);
-        // const res = axios.post("주소", formData, {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // });
-        // let tempUrl = res.data;
-
-        // 정석적으로 백엔드에 axios.post 로 이미지 전송후
-        // 리턴 결과로 이미지의 URL 을 받아옵니다.
-        // 받는 결과를 출력합니다.
-        let tempUrl = URL.createObjectURL(file);
-        tempUrl =
-          "https://i.namu.wiki/i/yHG3_20MxOUL3m1VlPJ8NRxVtRfk9MUUymDGMVFjr9Q2HT7zKI6CP9UdaFhIGipN6rBCY2KoYruBwJUJw6E38BVJDJmtIeZjZHvyW9pdn4Mruw5dQBGTLDG93ehgWZI45q7AOq3mHXWbNbVkTEyA_A.webp";
-        // 에디터에 배치하기
-        const range = editor.getSelection();
-        // tempUrl 은 정확히 나온다.
-        // 그런데 출력에는 <img src="//:0"> 가 나온다.
-        editor.insertEmbed(range.index, "image", tempUrl);
-        // 강제로 마우스 커서 위치 이동하기
-        editor.setSelection(range.index + 1);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-    // 6. 이벤트로 가상의 image url 을 생성한다. URL.crateObjectURL
-    // 7. 참조해둔 에디터에 img 태그를 밀어넣고 주소는 위의 주소로 넣는다.
-    // 8. 마우스 커서 위치를 조절한다.
+  const countRef = useRef(0);
+  const incre = () => {
+    countRef.current++;
+    console.log(countRef.current);
   };
-
-  // 모듈 활용
-  // 순서4 12.24 (화) useMemo
-  // useMemo : `변수를 만들고 다시 생성되지 않도록 메모`한다.
-  // useMemo : 리랜더링시 다시 변수를 만들지 않는다.
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, 4, 5, 6, false] }],
-          [{ font: [] }],
-          [{ align: [] }],
-          ["bold", "italic", "underline", "strike", "blockquote"],
-          [{ list: "ordered" }, { list: "bullet" }, "link"],
-          [
-            {
-              color: [
-                "#000000",
-                "#e60000",
-                "#ff9900",
-                "#ffff00",
-                "#008a00",
-                "#0066cc",
-                "#9933ff",
-                "#ffffff",
-                "#facccc",
-                "#ffebcc",
-                "#ffffcc",
-                "#cce8cc",
-                "#cce0f5",
-                "#ebd6ff",
-                "#bbbbbb",
-                "#f06666",
-                "#ffc266",
-                "#ffff66",
-                "#66b966",
-                "#66a3e0",
-                "#c285ff",
-                "#888888",
-                "#a10000",
-                "#b26b00",
-                "#b2b200",
-                "#006100",
-                "#0047b2",
-                "#6b24b2",
-                "#444444",
-                "#5c0000",
-                "#663d00",
-                "#666600",
-                "#003700",
-                "#002966",
-                "#3d1466",
-                "custom-color",
-              ],
-            },
-            { background: [] },
-          ],
-          ["image", "video"],
-          ["clean"],
-        ],
-        // 이미지 관련해서는 내가 직접 처리할께.
-        handlers: {
-          image: imageHandler,
-        },
-      },
-    }),
-    [],
-  );
-
   return (
     <div>
-      <h1>Editor</h1>
-      <div style={{ width: "80%", margin: "0 auto" }}>
-        <form>
-          {/* <textarea></textarea> */}
-          <ReactQuill
-            ref={quillRef}
-            onChange={e => setData(e)}
-            modules={modules}
-          />
-        </form>
+      <h1>값 보관 및 저장 {countRef.current}</h1>
+      <button onClick={incre}>증가</button>
+    </div>
+  );
+}
+export default App;
+```
+
+## 응용예제1 (태그위치로 이동하기)
+
+```jsx
+import { useRef } from "react";
+
+function App() {
+  const compRef = useRef(null);
+  const topRef = useRef(null);
+
+  const moveCom = () => {
+    console.log("회사소개로 이동");
+    compRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+  const topMove = () => {
+    topRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+  return (
+    <div ref={topRef}>
+      <h1>스크롤 해보기</h1>
+      <button onClick={moveCom}>회사소개</button>
+      <div style={{ height: "100vh", backgroundColor: "hotpink" }}>인사말</div>
+      <div
+        ref={compRef}
+        style={{ height: "100vh", backgroundColor: "greenyellow" }}
+      >
+        회사소개
       </div>
+
+      <button
+        onClick={topMove}
+        style={{ position: "fixed", right: 0, bottom: 0 }}
+      >
+        위로가기
+      </button>
+    </div>
+  );
+}
+export default App;
+```
+
+## 응용예제2 (폼 값 초기화)
+
+```jsx
+import { useRef } from "react";
+
+function App() {
+  const inputRef = useRef(null);
+  const clear = () => {
+    // 폼값 초기화
+    inputRef.current.value = "";
+  };
+  return (
+    <div>
+      <input ref={inputRef} placeholder="이름" />
+      <button onClick={clear}>값 초기화</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 응용예제3 (비디오 제어)
+
+```jsx
+import { useRef } from "react";
+
+function App() {
+  const videoRef = useRef(null);
+  const prevV = () => {
+    videoRef.current.currentTime -= 10;
+    videoRef.current.play();
+  };
+  const playV = () => {
+    videoRef.current.currentTime = 0;
+    videoRef.current.play();
+  };
+  const stopV = () => {
+    videoRef.current.currentTime = 0;
+    videoRef.current.pause();
+  };
+  const nextV = () => {
+    videoRef.current.currentTime += 10;
+    videoRef.current.play();
+  };
+  return (
+    <div>
+      <h1>VIDEO 제어</h1>
+      {/* <video src="비디오주소url"></video> */}
+      <video ref={videoRef} src="비디오주소url" muted autoPlay controls></video>
       <div>
-        <h2>입력중인 데이터(서버에 보내줄 글자)</h2>
-        <p>{data}</p>
-        {/* 크로스 사이트 스크립트 공격` 가능성이 방지 위한 npm i dompurify 설치 이후에 */}
-        {/* <p dangerouslySetInnerHTML={{ __html: data }} /> */}
-        {/* 최소한의 방어책  */}
-        <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />
+        <button onClick={prevV}>10초전</button>
+        <button onClick={playV}>play</button>
+        <button onClick={stopV}>stop</button>
+        <button onClick={nextV}>10초후</button>
       </div>
     </div>
   );
