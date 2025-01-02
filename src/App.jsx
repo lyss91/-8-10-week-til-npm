@@ -1,14 +1,14 @@
-import { TodoProvider } from "./contexts/todoProvider";
-import TodoAdd from "./todo/TodoAdd";
-import TodoList from "./todo/TodoList";
+import { Provider } from "react-redux";
+import Counter from "./components/Counter";
+import store from "./store/store";
 
-// 아래 Provide 에 의해서 state, disaptch 접근가능
 function App() {
   return (
-    <TodoProvider>
-      <TodoAdd />
-      <TodoList />
-    </TodoProvider>
+    // 전역 store 를 활용함.
+    <Provider store={store}>
+      <Counter />
+    </Provider>
   );
 }
+
 export default App;

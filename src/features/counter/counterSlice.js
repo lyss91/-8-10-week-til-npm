@@ -1,3 +1,6 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+// 초기값 (상태 관리할 데이터)
 const initialState = {
   count: 0,
 };
@@ -5,10 +8,11 @@ const initialState = {
 // Slice 는 store 를 쪼개서 사용한다는 의미
 const counterSlice = createSlice({
   // 슬라이스 구분 이름
-  naem: " counterSlice",
+  name: " counterSlice", // 문자열
   // 슬라이스 초기 값
-  initialState: initialState,
+  initialState,
   // store/counterslice 에 저장된 값 갱신 함수
+  //  상태를 갱신해 주는 Reducers 함수 묶음
   reducers: {
     add: state => {
       state.count += 1;
@@ -20,10 +24,14 @@ const counterSlice = createSlice({
       state.count = 1;
     },
   },
+  // 추후 외부 API 연동
 });
 
 const todoSlice = createSlice();
 const loginSlice = createSlice();
 
+// Reduce 함수를 외부로 내보내서 dispatch 를 해주도록 합니다.
+// action : type 의 구분, payload 전달.
 export const { add, minus, reset } = counterSlice.actions;
-export default counterSlice.actions;
+
+export default counterSlice.reducer;
